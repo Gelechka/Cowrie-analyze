@@ -1,0 +1,10 @@
+all:
+  children:
+    honeypots:
+      hosts:
+        here_is_your_host:
+          ansible_host:
+          vars:
+            ansible_user:
+            ansible_password:
+            ansible_sudo_pass:

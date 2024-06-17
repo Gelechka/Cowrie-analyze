@@ -1,0 +1,30 @@
+---
+# tasks file for mysql-install
+- name: Download get.docker.sh
+  ansible.builtin.get_url:
+    url: https://get.docker.com
+    dest: /tmp/get-docker.sh
+
+- name: Run get-docker.sh
+  ansible.builtin.shell: sh /tmp/get-docker.sh
+  become: true
+
+- name: Create /opt/mysql directory
+  ansible.builtin.file:
+    path: /opt/mysql
+    state: directory
+  become: true
+
+- name: Template docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: /opt/mysql/docker-compose.yml
+  become: true
+
+- name: Start database
+  ansible.builtin.shell: docker compose -f /opt/mysql/docker-compose.yml up -d
+  become: true
+
+- name: Wait for database migration and mysql bootstrap
+  ansible.builtin.pause:
+    prompt: "It's time to create database structure"

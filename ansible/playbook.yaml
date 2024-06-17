@@ -1,0 +1,6 @@
+---
+- name: Honeypot setup
+  hosts: honeypots
+  roles:
+    - role: mysql-install
+    - role: cowrie-install

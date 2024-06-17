@@ -1,0 +1,78 @@
+---
+# tasks file for cowrie-install
+- name: Install a list of packages
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+    - git
+    - python3-virtualenv
+    - libssl-dev
+    - libffi-dev
+    - build-essential
+    - libpython3-dev
+    - python3-minimal
+    - authbind
+    - virtualenv
+  become: true
+
+- name: Create a user account
+  ansible.builtin.user:
+    name: cowrie
+    password: '!'
+    create_home: true
+  become: true
+
+- name: Checkout the code
+  ansible.builtin.git:
+    repo: 'http://github.com/cowrie/cowrie'
+    dest: /home/cowrie/cowrie-{{ item }}
+    clone: true
+  become: true
+  become_user: cowrie
+  with_items:
+  - 22
+  - 222
+  - 2222
+  - 22222
+
+- name: Setup Virtual Environment
+  ansible.builtin.pip: 
+    virtualenv: "/home/cowrie/cowrie-env" 
+    virtualenv_python: python3
+    requirements: /home/cowrie/cowrie-22/requirements.txt
+  become: true
+  become_user: cowrie
+
+- name: Template cowrie.cfg
+  ansible.builtin.template: 
+    src: cowrie.cfg
+    dest: /home/cowrie/cowrie-{{ item }}/cowrie.cfg
+  become: true
+  become_user: cowrie
+  with_items:
+  - 22
+  - 222
+  - 2222
+  - 22222
+
+- name: Create authbind bindings
+  ansible.builtin.file:
+    path: /etc/authbind/byport/{{ item }}
+    owner: cowrie
+    group: cowrie
+    mode: '0770'
+    state: touch
+  become: true
+  with_items: 
+  - 22
+  - 222
+
+- name: Start cowrie
+  ansible.builtin.shell: /home/cowrie/cowrie-{{ item }}/bin/cowrie restart
+  become: true
+  become_user: cowrie
+  with_items:
+  - 22
+  - 222
+  - 2222
+  - 22222

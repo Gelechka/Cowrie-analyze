@@ -1,0 +1,7 @@
+---
+# defaults file for cowrie-install
+mysql_host: 127.0.0.1
+mysql_database: cowrie
+mysql_username: cowrie
+mysql_password: 
+mysql_port: 3306
